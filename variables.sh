@@ -1,2 +1,11 @@
 #!/bin/bash
-#TODO QUI FINIRANNO TUTTE LE VARIABILI DA USARE NEI VARI SCRIPT
+
+#file=PATH TO FILE
+
+stringToSearch=liquibase
+commentCharacter=#
+
+if [[ -z "$file" ]]; then
+	echo "Variable \"file\" is not set"
+	exit 1
+fi
