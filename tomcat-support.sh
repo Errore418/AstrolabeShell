@@ -1,6 +1,7 @@
 #!/bin/bash
 source variables.sh
 
+toggleRoutineArgument=toggle
 enableArgument=enable
 disableArgument=disable
 
@@ -35,8 +36,8 @@ function change_properties {
 	echo "$3 $1"
 }
 
-function lines_routine {
-	if [ "$#" = "0" ]; then
+function toggle_routine {
+	if [[ "$#" = "0" ]]; then
 		echo "This routine is for enable or disable lines that contains $stringToSearch in file $file"
 		echo "Select an option:"
 		echo "0 - Enable lines"
@@ -54,7 +55,7 @@ function lines_routine {
 	fi
 }
 
-if [ "$#" = "0" ]; then
+if [[ "$#" = "0" ]]; then
 	echo "================================"
 	echo "=== Welcome in TomcatSupport ==="
 	echo "================================"
@@ -64,7 +65,9 @@ if [ "$#" = "0" ]; then
 	read -n1 choice
 	echo -e "\n"
 	if [[ $choice = "0" ]]; then
-		lines_routine
+		toggle_routine
 	fi
+elif [[ $1 = $toggleRoutineArgument ]]; then
+	toggle_routine $2
 fi
 exit 0
