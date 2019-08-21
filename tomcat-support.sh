@@ -7,8 +7,7 @@ disableArgument=disable
 
 function loop_over_lines {
 	local IFS=$'\n'
-	for line in $(grep $stringToSearch $file)
-	do
+	for line in $(grep $stringToSearch $file); do
 		if [[ $1 = $enableArgument ]]; then
 			enable_line $line
 		elif [[ $1 = $disableArgument ]]; then
