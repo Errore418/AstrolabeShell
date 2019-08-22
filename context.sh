@@ -14,13 +14,17 @@ contextFiles=($(ls $contextDir))
 
 function printContextFiles {
 	for i in "${!contextFiles[@]}"; do
+		regex="(\\${temporarySuffix}|\\${archivedSuffix})"
+		if ! [[ ${contextFiles[$i]} = $currentContext || ${contextFiles[$i]} =~ $regex ]]; then
+			setProperty ${contextFiles[$i]} $fileProperty ${contextFiles[$i]}
+		fi
 		fileWithAlias=$(formatFileWithAlias ${contextFiles[$i]})
 		echo "$i - $fileWithAlias"
 	done
 }
 
 function formatFileWithAlias {
-	alias=$(findPropertyValue ${1} $aliasProperty)
+	alias=$(findProperty ${1} $aliasProperty)
 	result="$1"
 	if [[ ! -z $alias ]]; then
 		result="$result ($alias)"
@@ -28,7 +32,7 @@ function formatFileWithAlias {
 	echo $result
 }
 
-function findPropertyValue {
+function findProperty {
 	fileToScan="${contextDir}/${1}"
 	grep -oP "(?<=${openComment}${2}${propertySeparator}).+(?=${closeComment})" $fileToScan
 }
