@@ -10,7 +10,7 @@ aliasProperty=ALIAS
 fileProperty=FILE
 propertySeparator=:
 
-contextFiles=($(ls $contextDir))
+contextFiles=($(ls $contextDir)) #UNSTABLE!!!
 
 function printContextFiles {
 	for i in "${!contextFiles[@]}"; do
