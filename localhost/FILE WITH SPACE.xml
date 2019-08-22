@@ -1,0 +1,5 @@
+<Context path="/test" docBase="/test">
+    <Parameter name="test" value="file space"/>
+</Context>
+<!--ALIAS:Questo file contiene spazi nel nome-->
+<!--FILE:FILE WITH SPACE.xml-->
