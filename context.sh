@@ -10,7 +10,7 @@ aliasProperty=ALIAS
 fileProperty=FILE
 propertySeparator=:
 
-mapfile -d '' contextFiles < <(find $contextDir -type f -printf "%f\0")
+mapfile -d '' contextFiles < <(find $contextDir -maxdepth 1 -type f -printf "%f\0")
 
 function printContextFiles {
 	for i in "${!contextFiles[@]}"; do
