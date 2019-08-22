@@ -5,27 +5,27 @@ source variables.sh
 ### TOGGLE ROUTINE ###
 
 function loop_over_lines {
-	local IFS=$'\n'
-	for line in $(grep $stringToSearch $toggleFile); do
-		if [[ $1 = $enableArgument ]]; then
-			enable_line $line
-		elif [[ $1 = $disableArgument ]]; then
-			disable_line $line
+	while IFS= read -r line
+	do
+		if [[ $1 = "$enableArgument" ]]; then
+			enable_line "$line"
+		elif [[ $1 = "$disableArgument" ]]; then
+			disable_line "$line"
 		fi
-	done
+	done < <(grep "$stringToSearch" "$toggleFile")
 }
 
 function enable_line {
 	if [[ $1 =~ $commentCharacter ]]; then
 		stringToInsert="${line//$commentCharacter}"
-		change_line $line $stringToInsert "Enabled line"
+		change_line "$line" "$stringToInsert" "Enabled line"
 	fi
 }
 
 function disable_line {
 	if [[ ! $1 =~ $commentCharacter ]]; then
 		stringToInsert="${commentCharacter}${line}"
-		change_line $line $stringToInsert "Disabled line"
+		change_line "$line" "$stringToInsert" "Disabled line"
 	fi
 }
 
@@ -44,15 +44,15 @@ function toggle_routine {
 		echo "0 - Enable lines"
 		echo "1 - Disable lines"
 		echo -n "Your choice: "
-		read -n1 choice
-		echo -e -n "\n"
+		read -r -n1 choice
+		echo -e -n "\\n"
 		if [[ $choice = "0" ]]; then
 			loop_over_lines $enableArgument
 		elif [[ $choice = "1" ]]; then
 			loop_over_lines $disableArgument
 		fi
 	else
-		loop_over_lines $1
+		loop_over_lines "$1"
 	fi
 }
 
@@ -61,11 +61,11 @@ function toggle_routine {
 function print_context_files {
 	for i in "${!contextFiles[@]}"; do
 		regex="(\\${temporarySuffix}|\\${archivedSuffix})"
-		if ! [[ "${contextFiles[$i]}" = $currentContext || "${contextFiles[$i]}" =~ $regex ]]; then
+		if ! [[ "${contextFiles[$i]}" = "$currentContext" || "${contextFiles[$i]}" =~ $regex ]]; then
 			set_property "${contextFiles[$i]}" $fileProperty "${contextFiles[$i]}"
 		fi
 		fileWithAlias=$(format_file_with_alias "${contextFiles[$i]}")
-		if [[ "${contextFiles[$i]}" = $currentContext ]]; then
+		if [[ "${contextFiles[$i]}" = "$currentContext" ]]; then
 			oldName=$(find_property "${contextFiles[$i]}" $fileProperty)
 			fileWithAlias=$(append_if_not_null "${fileWithAlias}" "${oldName}")
 		fi
@@ -83,7 +83,7 @@ function append_if_not_null {
 	if [[ ! -z $2 ]]; then
 		result="$result ($2)"
 	fi
-	echo $result
+	echo "$result"
 }
 
 function find_property {
@@ -97,20 +97,20 @@ function drop_property {
 }
 
 function set_property {
-	drop_property "${1}" ${2}
+	drop_property "${1}" "${2}"
 	echo "${openComment}${2}${propertySeparator}${3}${closeComment}" >> "$targetFile"
 }
 
 function acquire_alias {	
 	echo -n "Insert an alias: "
-	read newAlias
+	read -r newAlias
 	set_property "$1" $aliasProperty "$newAlias"
 	echo "Alias ${newAlias} correctly registered for file ${1}"
 }
 
 function swap_files {
 	tempFile="${currentContext}${temporarySuffix}"
-	archivedFile=$(find_property $currentContext $fileProperty)
+	archivedFile=$(find_property "$currentContext" $fileProperty)
 	if [[ -z $archivedFile ]]; then
 		archivedFile="${currentContext}${archivedSuffix}"
 	fi
@@ -133,9 +133,9 @@ function file_selected {
 	echo "0 - Swap with ${currentContext}"
 	echo "1 - Set alias"
 	echo -n "Your choice: "
-	read -n1 choice
-	echo -e -n "\n"
-	if [[ $choice = "0" && "$1" != $currentContext ]]; then
+	read -r -n1 choice
+	echo -e -n "\\n"
+	if [[ $choice = "0" && "$1" != "$currentContext" ]]; then
 		swap_files "$1"
 	elif [[ $choice = "1" ]]; then
 		acquire_alias "$1"
@@ -143,7 +143,7 @@ function file_selected {
 }
 
 function context_routine {
-	mapfile -d '' contextFiles < <(find $contextDir -maxdepth 1 -type f -printf "%f\0")
+	mapfile -d '' contextFiles < <(find "$contextDir" -maxdepth 1 -type f -printf "%f\\0")
 	if [[ "$#" = "0" ]]; then
 		echo "======================="
 		echo "=== Context routine ==="
@@ -152,8 +152,8 @@ function context_routine {
 		echo "Select a file:"
 		print_context_files
 		echo -n "Your choice: "
-		read choice
-		if [[ $choice =~ ^[0-9]+$ ]] && [[ "$choice" -ge 0 || "$choice" -le "${#contextFiles[@]}" ]]; then
+		read -r choice
+		if [[ $choice =~ ^[0-9]+$ && "$choice" -ge 0 && "$choice" -lt "${#contextFiles[@]}" ]]; then
 			file_selected "${contextFiles[$choice]}"
 		fi
 	fi
@@ -169,16 +169,16 @@ if [[ "$#" = "0" ]]; then
 	echo "0 - Enable or disable lines"
 	echo "1 - Swap context files"
 	echo -n "Your choice: "
-	read -n1 choice
-	echo -e -n "\n"
+	read -r -n1 choice
+	echo -e -n "\\n"
 	if [[ $choice = "0" ]]; then
 		toggle_routine
 	elif [[ $choice = "1" ]]; then
 		context_routine
 	fi
-elif [[ $1 = $toggleRoutineArgument ]]; then
-	toggle_routine $2
-elif [[ $1 = $contextRoutineArgument ]]; then
+elif [[ $1 = "$toggleRoutineArgument" ]]; then
+	toggle_routine "$2"
+elif [[ $1 = "$contextRoutineArgument" ]]; then
 	context_routine
 fi
 exit 0
