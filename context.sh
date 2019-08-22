@@ -19,15 +19,23 @@ function printContextFiles {
 			setProperty "${contextFiles[$i]}" $fileProperty "${contextFiles[$i]}"
 		fi
 		fileWithAlias=$(formatFileWithAlias "${contextFiles[$i]}")
+		if [[ "${contextFiles[$i]}" = $currentContext ]]; then
+			oldName=$(findProperty "${contextFiles[$i]}" $fileProperty)
+			fileWithAlias=$(appendIfNotNull "${fileWithAlias}" "${oldName}")
+		fi
 		echo "$i - $fileWithAlias"
 	done
 }
 
 function formatFileWithAlias {
 	alias=$(findProperty "${1}" $aliasProperty)
+	appendIfNotNull "${1}" "$alias"
+}
+
+function appendIfNotNull {
 	result="$1"
-	if [[ ! -z $alias ]]; then
-		result="$result ($alias)"
+	if [[ ! -z $2 ]]; then
+		result="$result ($2)"
 	fi
 	echo $result
 }
