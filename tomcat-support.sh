@@ -40,7 +40,7 @@ function toggle_routine {
 		echo "======================"
 		echo "=== Toggle routine ==="
 		echo "======================"
-		echo "This routine is for enable or disable lines that contains $stringToSearch in file $file"
+		echo "This routine is for enabling or disabling lines that contains $stringToSearch in file $file"
 		echo "Select an option:"
 		echo "0 - Enable lines"
 		echo "1 - Disable lines"
