@@ -39,7 +39,7 @@ function toggle_routine {
 		echo "======================"
 		echo "=== Toggle routine ==="
 		echo "======================"
-		echo "This routine is for enabling or disabling lines that contains $stringToSearch in file $toggleFile"
+		echo "This routine is for enabling or disabling lines that contain $stringToSearch in file $toggleFile"
 		echo "Select an option:"
 		echo "0 - Enable lines"
 		echo "1 - Disable lines"
@@ -124,11 +124,11 @@ function rename_file {
 	oldFile="${contextDir}/${1}"
 	newFile="${contextDir}/${2}"
 	mv "$oldFile" "$newFile"
-	echo "$1 renamed in $2"
+	echo "Renamed $1 to $2"
 }
 
 function file_selected {
-	echo "The file $(format_file_with_alias "$1") has been selected"
+	echo "The file $(format_file_with_alias "$1") has been chosen"
 	echo "Select an option:"
 	echo "0 - Swap with ${currentContext}"
 	echo "1 - Set alias"

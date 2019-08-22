@@ -1,13 +1,13 @@
 #!/bin/bash
 
-### TOGGLE VARIABLE ###
+### TOGGLE VARIABLES ###
 
 #toggleFile=PATH TO TOGGLE FILE
 
 stringToSearch=liquibase
 commentCharacter=#
 
-### CONTEXT VARIABLE ###
+### CONTEXT VARIABLES ###
 
 #contextDir=PATH TO CONTEXT DIRECTORY
 #currentContext=NAME OF CURRENT CONTEXT
@@ -20,7 +20,7 @@ aliasProperty=ALIAS
 fileProperty=FILE
 propertySeparator=:
 
-### SYSTEM VARIABLE ###
+### SYSTEM VARIABLES ###
 
 toggleRoutineArgument=toggle
 contextRoutineArgument=context
@@ -29,7 +29,7 @@ disableArgument=disable
 
 function checkVariable {	
 	if [[ -z "${1}" ]]; then
-		echo "Variable \"${2}\" is not set"
+		echo "Variable ${2} is not set"
 		exit 1
 	fi
 }
