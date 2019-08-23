@@ -101,7 +101,7 @@ function set_property {
 	echo "${openComment}${2}${propertySeparator}${3}${closeComment}" >> "$targetFile"
 }
 
-function acquire_alias {	
+function acquire_alias {
 	echo -n "Insert an alias: "
 	read -r newAlias
 	set_property "$1" $aliasProperty "$newAlias"
