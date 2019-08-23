@@ -63,9 +63,9 @@ function toggle_routine {
 		read -r -n1 choice
 		echo -e -n "\\n"
 		if [[ $choice = "0" ]]; then
-			loop_over_lines $enableArgument
+			loop_over_lines "$enableArgument"
 		elif [[ $choice = "1" ]]; then
-			loop_over_lines $disableArgument
+			loop_over_lines "$disableArgument"
 		fi
 	else
 		loop_over_lines "$1"
@@ -78,11 +78,11 @@ function print_context_files {
 	for i in "${!contextFiles[@]}"; do
 		regex="(\\${temporarySuffix}|\\${archivedSuffix})"
 		if ! [[ "${contextFiles[$i]}" = "$currentContext" || "${contextFiles[$i]}" =~ $regex ]]; then
-			set_property "${contextFiles[$i]}" $fileProperty "${contextFiles[$i]}"
+			set_property "${contextFiles[$i]}" "$fileProperty" "${contextFiles[$i]}"
 		fi
 		fileWithAlias=$(format_file_with_alias "${contextFiles[$i]}")
 		if [[ "${contextFiles[$i]}" = "$currentContext" ]]; then
-			oldName=$(find_property "${contextFiles[$i]}" $fileProperty)
+			oldName=$(find_property "${contextFiles[$i]}" "$fileProperty")
 			fileWithAlias=$(append_if_not_null "${fileWithAlias}" "${oldName}")
 		fi
 		echo "$i - $fileWithAlias"
@@ -90,7 +90,7 @@ function print_context_files {
 }
 
 function format_file_with_alias {
-	alias=$(find_property "${1}" $aliasProperty)
+	alias=$(find_property "${1}" "$aliasProperty")
 	append_if_not_null "${1}" "$alias"
 }
 
@@ -120,13 +120,13 @@ function set_property {
 function acquire_alias {
 	echo -n "Insert an alias: "
 	read -r newAlias
-	set_property "$1" $aliasProperty "$newAlias"
+	set_property "$1" "$aliasProperty" "$newAlias"
 	echo "Alias ${newAlias} correctly registered for file ${1}"
 }
 
 function swap_files {
 	tempFile="${currentContext}${temporarySuffix}"
-	archivedFile=$(find_property "$currentContext" $fileProperty)
+	archivedFile=$(find_property "$currentContext" "$fileProperty")
 	if [[ -z $archivedFile ]]; then
 		archivedFile="${currentContext}${archivedSuffix}"
 	fi
