@@ -143,7 +143,7 @@ function file_selected {
 }
 
 function context_routine {
-	mapfile -d '' contextFiles < <(find "$contextDir" -maxdepth 1 -type f -printf "%f\\0")
+	mapfile -d '' contextFiles < <(find "$contextDir" -maxdepth 1 -type f -printf "%f\\0" | sort -z)
 	if [[ "$#" = "0" ]]; then
 		echo "======================="
 		echo "=== Context routine ==="
