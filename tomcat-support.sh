@@ -22,8 +22,7 @@ source variables.sh
 ### TOGGLE ROUTINE ###
 
 function loop_over_lines {
-	while IFS= read -r line
-	do
+	while IFS= read -r line; do
 		if [[ $1 = "$enableArgument" ]]; then
 			enable_line "$line"
 		elif [[ $1 = "$disableArgument" ]]; then

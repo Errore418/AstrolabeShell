@@ -1,6 +1,6 @@
 #!/bin/bash
 
 name=tomcat-support
-version=1.0
+version=1.1
 
 tar -czvf "${name}_${version}.tar.gz" "${name}.sh" variables.sh README.md LICENSE
