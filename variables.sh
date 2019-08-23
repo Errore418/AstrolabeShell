@@ -47,12 +47,12 @@ disableArgument=disable
 version=1.1
 
 function checkVariable {	
-	if [[ -z "${1}" ]]; then
-		echo "Variable ${2} is not set"
+	if [[ -z "${!1}" ]]; then
+		echo "Variable ${1} is not set"
 		exit 1
 	fi
 }
 
-checkVariable "${toggleFile}" "toggleFile"
-checkVariable "${contextDir}" "contextDir"
-checkVariable "${currentContext}" "currentContext"
+checkVariable "toggleFile"
+checkVariable "contextDir"
+checkVariable "currentContext"
