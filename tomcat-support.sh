@@ -159,6 +159,12 @@ function context_routine {
 	fi
 }
 
+### VERSION ROUTINE ###
+
+function version_routine {
+	echo "TomcatSupport version ${version}"
+}
+
 ### WELCOME ROUTINE ###
 
 if [[ "$#" = "0" ]]; then
@@ -168,6 +174,7 @@ if [[ "$#" = "0" ]]; then
 	echo "Select an option:"
 	echo "0 - Enable or disable lines"
 	echo "1 - Swap context files"
+	echo "2 - Display current version"
 	echo -n "Your choice: "
 	read -r -n1 choice
 	echo -e -n "\\n"
@@ -175,10 +182,14 @@ if [[ "$#" = "0" ]]; then
 		toggle_routine
 	elif [[ $choice = "1" ]]; then
 		context_routine
+	elif [[ $choice = "2" ]]; then
+		version_routine
 	fi
 elif [[ $1 = "$toggleRoutineArgument" ]]; then
 	toggle_routine "$2"
 elif [[ $1 = "$contextRoutineArgument" ]]; then
 	context_routine
+elif [[ $1 = "$versionArgument" ]]; then
+	version_routine
 fi
 exit 0
