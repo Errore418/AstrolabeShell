@@ -46,13 +46,23 @@ enableArgument=enable
 disableArgument=disable
 version=1.1
 
-function checkVariable {	
-	if [[ -z "${!1}" ]]; then
-		echo "Variable ${1} is not set"
+### CHECK VARIABLES ROUTINE ###
+
+function collectErrors {
+	msgErrors=()
+	for var in "$@"; do
+		if [[ -z "${!var}" ]]; then
+			msgError+=("Error: variable ${var} is not set")
+		fi
+	done
+}
+
+function printErrors {
+	if [[ "${#msgError[@]}" -gt "0" ]]; then
+		printf '%s\n' "${msgError[@]}"
 		exit 1
 	fi
 }
 
-checkVariable "toggleFile"
-checkVariable "contextDir"
-checkVariable "currentContext"
+collectErrors "toggleFile" "contextDir" "currentContext"
+printErrors
