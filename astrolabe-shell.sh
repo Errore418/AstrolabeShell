@@ -2,14 +2,14 @@
 
 #	Copyright (C) 2019 Claudio Nave
 #
-#	This file is part of TomcatSupport.
+#	This file is part of AstrolabeShell.
 #
-#	TomcatSupport is free software: you can redistribute it and/or modify
+#	AstrolabeShell is free software: you can redistribute it and/or modify
 #	it under the terms of the GNU General Public License as published by
 #	the Free Software Foundation, either version 3 of the License, or
 #	(at your option) any later version.
 #
-#	TomcatSupport is distributed in the hope that it will be useful,
+#	AstrolabeShell is distributed in the hope that it will be useful,
 #	but WITHOUT ANY WARRANTY; without even the implied warranty of
 #	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #	GNU General Public License for more details.
@@ -178,15 +178,15 @@ function context_routine {
 ### VERSION ROUTINE ###
 
 function version_routine {
-	echo "TomcatSupport version ${version}"
+	echo "AstrolabeShell version ${version}"
 }
 
 ### WELCOME ROUTINE ###
 
 if [[ "$#" = "0" ]]; then
-	echo "================================"
-	echo "=== Welcome in TomcatSupport ==="
-	echo "================================"
+	echo "================================="
+	echo "=== Welcome in AstrolabeShell ==="
+	echo "================================="
 	echo "Select an option:"
 	echo "0 - Enable or disable lines"
 	echo "1 - Swap context files"
