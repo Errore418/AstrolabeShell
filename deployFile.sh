@@ -2,7 +2,10 @@
 
 deployTarget="/home/cnave/Documenti/Progetti/AstrolabeShell/deployFeature/deployTarget"
 deployExtension=".dodeploy"
-declare -A applicationDirs=( ["dummy.war"]="/home/cnave/Documenti/Progetti/AstrolabeShell/deployFeature/warDirectories/dummy.war" ["test.war"]="/home/cnave/Documenti/Progetti/AstrolabeShell/deployFeature/warDirectories/test.war" ["foobar.war"]="/home/cnave/Documenti/Progetti/AstrolabeShell/deployFeature/warDirectories/foobar.war" )
+declare -A applicationDirs
+applicationDirs["dummy.war"]="/home/cnave/Documenti/Progetti/AstrolabeShell/deployFeature/warDirectories/dummy.war"
+applicationDirs["test.war"]="/home/cnave/Documenti/Progetti/AstrolabeShell/deployFeature/warDirectories/test.war"
+applicationDirs["foobar.war"]="/home/cnave/Documenti/Progetti/AstrolabeShell/deployFeature/warDirectories/foobar.war"
 
 function regenerate_symlink {
 	for applicationName in "${!applicationDirs[@]}"; do
@@ -15,15 +18,10 @@ function regenerate_symlink {
 }
 
 function deploy_application {
+	find "$deployTarget" -maxdepth 1 -type f -delete
 	regenerate_symlink
 	touch "${deployTarget}/${1}${deployExtension}"
-	echo "Deployed $1"
-}
-
-function print_applications {
-	for i in "${!applicationNameOrdered[@]}"; do
-		echo "$i - ${applicationNameOrdered[$i]}"
-	done
+	echo "Deployed application $1"
 }
 
 function deploy_routine {
@@ -34,7 +32,9 @@ function deploy_routine {
 		echo "======================"
 		echo "This routine is for deploying applications in $deployTarget"
 		echo "Select an application:"
-		print_applications
+		for i in "${!applicationNameOrdered[@]}"; do
+			echo "$i - ${applicationNameOrdered[$i]}"
+		done
 		echo -n "Your choice: "
 		read -r choice
 		if [[ $choice =~ ^[0-9]+$ && "$choice" -ge 0 && "$choice" -lt "${#applicationNameOrdered[@]}" ]]; then
