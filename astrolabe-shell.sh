@@ -175,6 +175,44 @@ function context_routine {
 	fi
 }
 
+### DEPLOY ROUTINE ###
+
+function regenerate_symlink {
+	for applicationName in "${!applicationDirs[@]}"; do
+		fileToCheck="${deployDir}/${applicationName}"
+		if [[ ! -L $fileToCheck ]]; then
+			ln -s "${applicationDirs[$applicationName]}" "$fileToCheck"
+			echo "Symlink regenerated for ${applicationName}"
+		fi
+	done
+}
+
+function deploy_application {
+	find "$deployDir" -maxdepth 1 -type f -delete
+	regenerate_symlink
+	touch "${deployDir}/${1}${deployExtension}"
+	echo "Deployed application $1"
+}
+
+function deploy_routine {
+	mapfile -d '' applicationNameOrdered < <(printf "%s\\0" "${!applicationDirs[@]}" | sort -z)
+	if [[ "$#" = "0" ]]; then
+		echo "======================"
+		echo "=== Deploy routine ==="
+		echo "======================"
+		echo "This routine is for deploying applications in $deployDir"
+		echo "Select an application:"
+		for i in "${!applicationNameOrdered[@]}"; do
+			echo "$i - ${applicationNameOrdered[$i]}"
+		done
+		echo -n "Your choice: "
+		read -r choice
+		if [[ $choice =~ ^[0-9]+$ && "$choice" -ge 0 && "$choice" -lt "${#applicationNameOrdered[@]}" ]]; then
+			deploy_application "${applicationNameOrdered[$choice]}"
+		fi
+	fi
+}
+
 ### VERSION ROUTINE ###
 
 function version_routine {
@@ -190,7 +228,8 @@ if [[ "$#" = "0" ]]; then
 	echo "Select an option:"
 	echo "0 - Enable or disable lines"
 	echo "1 - Swap context files"
-	echo "2 - Display current version"
+	echo "2 - Deploy applications"
+	echo "3 - Display current version"
 	echo -n "Your choice: "
 	read -r -n1 choice
 	echo -e -n "\\n"
@@ -199,12 +238,16 @@ if [[ "$#" = "0" ]]; then
 	elif [[ $choice = "1" ]]; then
 		context_routine
 	elif [[ $choice = "2" ]]; then
+		deploy_routine
+	elif [[ $choice = "3" ]]; then
 		version_routine
 	fi
 elif [[ $1 = "$toggleRoutineArgument" ]]; then
 	toggle_routine "$2"
 elif [[ $1 = "$contextRoutineArgument" ]]; then
 	context_routine
+elif [[ $1 = "$deployRoutineArgument" ]]; then
+	deploy_routine
 elif [[ $1 = "$versionArgument" ]]; then
 	version_routine
 fi

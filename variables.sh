@@ -19,15 +19,15 @@
 
 ### TOGGLE VARIABLES ###
 
-#toggleFile=PATH TO TOGGLE FILE
+#toggleFile="PATH TO TOGGLE FILE"
 
 stringToSearch=liquibase
 commentCharacter=#
 
 ### CONTEXT VARIABLES ###
 
-#contextDir=PATH TO CONTEXT DIRECTORY
-#currentContext=NAME OF CURRENT CONTEXT
+#contextDir="PATH TO CONTEXT DIRECTORY"
+#currentContext="NAME OF CURRENT CONTEXT"
 
 archivedSuffix=.archived
 temporarySuffix=.temp
@@ -37,10 +37,21 @@ aliasProperty=ALIAS
 fileProperty=FILE
 propertySeparator=:
 
+### DEPLOY VARIABLES ###
+
+#deployDir="PATH TO DEPLOY DIRECTORY"
+#declare -A applicationDirs
+#applicationDirs["APPLICATION NAME"]="PATH TO APPLICATION DIRECTORY"
+#applicationDirs["APPLICATION NAME"]="PATH TO APPLICATION DIRECTORY"
+#...
+
+deployExtension=.dodeploy
+
 ### SYSTEM VARIABLES ###
 
 toggleRoutineArgument=--toggle
 contextRoutineArgument=--context
+deployRoutineArgument=--deploy
 versionArgument=--version
 enableArgument=enable
 disableArgument=disable
