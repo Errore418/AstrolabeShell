@@ -75,5 +75,5 @@ function printErrors {
 	fi
 }
 
-collectErrors "toggleFile" "contextDir" "currentContext"
+collectErrors "toggleFile" "contextDir" "currentContext" "deployDir" "applicationDirs"
 printErrors
