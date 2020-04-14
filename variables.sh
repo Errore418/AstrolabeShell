@@ -39,9 +39,9 @@ propertySeparator=:
 
 ### SYSTEM VARIABLES ###
 
-toggleRoutineArgument=toggle
-contextRoutineArgument=context
-versionArgument=version
+toggleRoutineArgument=--toggle
+contextRoutineArgument=--context
+versionArgument=--version
 enableArgument=enable
 disableArgument=disable
 version=1.1
