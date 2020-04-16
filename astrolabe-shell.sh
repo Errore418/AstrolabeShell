@@ -177,19 +177,9 @@ function context_routine {
 
 ### DEPLOY ROUTINE ###
 
-function regenerate_symlink {
-	for applicationName in "${!applicationDirs[@]}"; do
-		fileToCheck="${deployDir}/${applicationName}"
-		if [[ ! -L $fileToCheck ]]; then
-			ln -s "${applicationDirs[$applicationName]}" "$fileToCheck"
-			echo "Symlink regenerated for ${applicationName}"
-		fi
-	done
-}
-
 function deploy_application {
-	find "$deployDir" -maxdepth 1 -type f -delete
-	regenerate_symlink
+	rm -f "${deployDir}"/* 2> /dev/null
+	ln -s "${applicationDirs[$1]}" "${deployDir}/${1}"
 	touch "${deployDir}/${1}${deployExtension}"
 	echo "Deployed application $1"
 }
