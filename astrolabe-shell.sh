@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#	Copyright (C) 2019 Claudio Nave
+#	Copyright (C) 2019 2020 Claudio Nave
 #
 #	This file is part of AstrolabeShell.
 #
@@ -213,6 +213,52 @@ function deploy_routine {
 	fi
 }
 
+### EXECUTE ROUTINE ###
+
+function check_range {
+	for index in "${indexArray[@]}"; do
+		if [[ "$index" -ge "${#commandNameOrdered[@]}" ]]; then
+			echo "$index is out of range"
+			exit 1
+		fi
+	done
+}
+
+function execute_commands {
+	mapfile -td '-' indexArray < <(echo -n "$1")
+	check_range
+	for index in "${indexArray[@]}"; do
+		commandName=${commandNameOrdered[$index]}
+		echo "==================== Execute $commandName ===================="
+		eval "${commands[$commandName]}"
+		if [[ $? == "0" ]]; then
+			echo "$commandName executed successfully"
+		else
+			echo "$commandName execution failed"
+			exit 1
+		fi
+	done
+}
+
+function execute_routine {
+	mapfile -d '' commandNameOrdered < <(printf "%s\\0" "${!commands[@]}" | sort -z)
+	if [[ "$#" = "0" ]]; then
+		echo "=====================#="
+		echo "=== Execute routine ==="
+		echo "======================="
+		echo "This routine is for executing custom commands"
+		echo "Select a series of commands (use '-' as a separator):"
+		for i in "${!commandNameOrdered[@]}"; do
+			echo "$i - ${commandNameOrdered[$i]}"
+		done
+		echo -n "Your choice: "
+		read -r choice
+		if [[ $choice =~ ^([0-9]+[-]?)+$ ]]; then
+			execute_commands "$choice"
+		fi
+	fi
+}
+
 ### VERSION ROUTINE ###
 
 function version_routine {
@@ -229,7 +275,8 @@ if [[ "$#" = "0" ]]; then
 	echo "0 - Enable or disable lines"
 	echo "1 - Swap context files"
 	echo "2 - Deploy applications"
-	echo "3 - Display current version"
+	echo "3 - Execute commands"
+	echo "4 - Display current version"
 	echo -n "Your choice: "
 	read -r -n1 choice
 	echo -e -n "\\n"
@@ -240,6 +287,8 @@ if [[ "$#" = "0" ]]; then
 	elif [[ $choice = "2" ]]; then
 		deploy_routine
 	elif [[ $choice = "3" ]]; then
+		execute_routine
+	elif [[ $choice = "4" ]]; then
 		version_routine
 	fi
 elif [[ $1 = "$toggleRoutineArgument" ]]; then
@@ -248,6 +297,8 @@ elif [[ $1 = "$contextRoutineArgument" ]]; then
 	context_routine
 elif [[ $1 = "$deployRoutineArgument" ]]; then
 	deploy_routine
+elif [[ $1 = "$executeRoutineArgument" ]]; then
+	execute_routine
 elif [[ $1 = "$versionArgument" ]]; then
 	version_routine
 fi

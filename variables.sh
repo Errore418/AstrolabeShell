@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#	Copyright (C) 2019 Claudio Nave
+#	Copyright (C) 2019 2020 Claudio Nave
 #
 #	This file is part of AstrolabeShell.
 #
@@ -41,21 +41,29 @@ propertySeparator=:
 
 #deployDir="PATH TO DEPLOY DIRECTORY"
 #declare -A applicationDirs
-#applicationDirs["APPLICATION NAME"]="PATH TO APPLICATION DIRECTORY"
-#applicationDirs["APPLICATION NAME"]="PATH TO APPLICATION DIRECTORY"
+#applicationDirs["APPLICATION NAME 1"]="PATH TO APPLICATION DIRECTORY 1"
+#applicationDirs["APPLICATION NAME 2"]="PATH TO APPLICATION DIRECTORY 2"
 #...
 
 deployExtension=.dodeploy
+
+### EXECUTE VARIABLES ###
+
+#declare -A commands
+#commands["COMMAND NAME 1"]="COMMAND 1"
+#commands["COMMAND NAME 2"]="COMMAND 2"
+#...
 
 ### SYSTEM VARIABLES ###
 
 toggleRoutineArgument=--toggle
 contextRoutineArgument=--context
 deployRoutineArgument=--deploy
+executeRoutineArgument=--execute
 versionArgument=--version
 enableArgument=enable
 disableArgument=disable
-version=1.1
+version=1.2
 
 ### CHECK VARIABLES ROUTINE ###
 
@@ -75,5 +83,5 @@ function printErrors {
 	fi
 }
 
-collectErrors "toggleFile" "contextDir" "currentContext" "deployDir" "applicationDirs"
+collectErrors "toggleFile" "contextDir" "currentContext" "deployDir" "applicationDirs" "commands"
 printErrors
