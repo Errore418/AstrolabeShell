@@ -96,7 +96,7 @@ function format_file_with_alias {
 
 function append_if_not_null {
 	result="$1"
-	if [[ ! -z $2 ]]; then
+	if [[ -n $2 ]]; then
 		result="$result ($2)"
 	fi
 	echo "$result"
@@ -219,9 +219,8 @@ function execute_commands {
 	check_range
 	for index in "${indexArray[@]}"; do
 		commandName=${commandNameOrdered[$index]}
-		echo "==================== Execute $commandName ===================="
-		eval "${commands[$commandName]}"
-		if [[ $? == "0" ]]; then
+		echo "==================== Execute $commandName ===================="		
+		if eval "${commands[$commandName]}"; then
 			echo "$commandName executed successfully"
 		else
 			echo "$commandName execution failed"

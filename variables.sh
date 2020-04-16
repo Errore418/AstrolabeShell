@@ -70,7 +70,7 @@ version=1.2
 function collectErrors {
 	msgErrors=()
 	for var in "$@"; do
-		if [[ -z "${!var}" ]]; then
+		if [[ ! -v "${var}[@]" ]]; then
 			msgError+=("Error: variable ${var} is not set")
 		fi
 	done
