@@ -19,7 +19,7 @@
 
 source variables.sh
 
-### TOGGLE ROUTINE ###
+### COMMENT ROUTINE ###
 
 function loop_over_lines {
 	while IFS= read -r line; do
@@ -28,34 +28,34 @@ function loop_over_lines {
 		elif [[ $1 = "$disableArgument" ]]; then
 			disable_line "$line"
 		fi
-	done < <(grep "$stringToSearch" "$toggleFile")
+	done < <(grep "$stringToSearch" "$commentFile")
 }
 
 function enable_line {
-	if [[ $1 =~ $commentCharacter ]]; then
-		stringToInsert="${line//$commentCharacter}"
+	if [[ $1 =~ $commentChar ]]; then
+		stringToInsert="${line//$commentChar}"
 		change_line "$line" "$stringToInsert" "Enabled line"
 	fi
 }
 
 function disable_line {
-	if [[ ! $1 =~ $commentCharacter ]]; then
-		stringToInsert="${commentCharacter}${line}"
+	if [[ ! $1 =~ $commentChar ]]; then
+		stringToInsert="${commentChar}${line}"
 		change_line "$line" "$stringToInsert" "Disabled line"
 	fi
 }
 
 function change_line {
-	sed -i "s/${1}/${2}/g" "$toggleFile"
+	sed -i "s/${1}/${2}/g" "$commentFile"
 	echo "$3 $1"
 }
 
-function toggle_routine {
+function comment_routine {
 	if [[ "$#" = "0" ]]; then
-		echo "======================"
-		echo "=== Toggle routine ==="
-		echo "======================"
-		echo "This routine is for enabling or disabling lines that contain $stringToSearch in file $toggleFile"
+		echo "======================="
+		echo "=== Comment routine ==="
+		echo "======================="
+		echo "This routine is for enabling or disabling lines that contain $stringToSearch in file $commentFile"
 		echo "Select an option:"
 		echo "0 - Enable lines"
 		echo "1 - Disable lines"
@@ -77,11 +77,11 @@ function toggle_routine {
 function print_context_files {
 	for i in "${!contextFiles[@]}"; do
 		regex="(\\${temporarySuffix}|\\${archivedSuffix})"
-		if ! [[ "${contextFiles[$i]}" = "$currentContext" || "${contextFiles[$i]}" =~ $regex ]]; then
+		if ! [[ "${contextFiles[$i]}" = "$activeContext" || "${contextFiles[$i]}" =~ $regex ]]; then
 			set_property "${contextFiles[$i]}" "$fileProperty" "${contextFiles[$i]}"
 		fi
 		fileWithAlias=$(format_file_with_alias "${contextFiles[$i]}")
-		if [[ "${contextFiles[$i]}" = "$currentContext" ]]; then
+		if [[ "${contextFiles[$i]}" = "$activeContext" ]]; then
 			oldName=$(find_property "${contextFiles[$i]}" "$fileProperty")
 			fileWithAlias=$(append_if_not_null "${fileWithAlias}" "${oldName}")
 		fi
@@ -125,13 +125,13 @@ function acquire_alias {
 }
 
 function swap_files {
-	tempFile="${currentContext}${temporarySuffix}"
-	archivedFile=$(find_property "$currentContext" "$fileProperty")
+	tempFile="${activeContext}${temporarySuffix}"
+	archivedFile=$(find_property "$activeContext" "$fileProperty")
 	if [[ -z $archivedFile ]]; then
-		archivedFile="${currentContext}${archivedSuffix}"
+		archivedFile="${activeContext}${archivedSuffix}"
 	fi
-	rename_file "$currentContext" "$tempFile"
-	rename_file "$1" "$currentContext"
+	rename_file "$activeContext" "$tempFile"
+	rename_file "$1" "$activeContext"
 	rename_file "$tempFile" "$archivedFile"
 	echo "Swapping completed"
 }
@@ -146,12 +146,12 @@ function rename_file {
 function file_selected {
 	echo "The file $(format_file_with_alias "$1") has been chosen"
 	echo "Select an option:"
-	echo "0 - Swap with ${currentContext}"
+	echo "0 - Swap with ${activeContext}"
 	echo "1 - Set alias"
 	echo -n "Your choice: "
 	read -r -n1 choice
 	echo -e -n "\\n"
-	if [[ $choice = "0" && "$1" != "$currentContext" ]]; then
+	if [[ $choice = "0" && "$1" != "$activeContext" ]]; then
 		swap_files "$1"
 	elif [[ $choice = "1" ]]; then
 		acquire_alias "$1"
@@ -159,7 +159,7 @@ function file_selected {
 }
 
 function context_routine {
-	mapfile -d '' contextFiles < <(find "$contextDir" -maxdepth 1 -type f -printf "%f\\0" | sort -z)
+	mapfile -td '' contextFiles < <(find "$contextDir" -maxdepth 1 -type f -printf "%f\\0" | sort -z)
 	if [[ "$#" = "0" ]]; then
 		echo "======================="
 		echo "=== Context routine ==="
@@ -180,25 +180,25 @@ function context_routine {
 function deploy_application {
 	rm -f "${deployDir}"/* 2> /dev/null
 	ln -s "${applicationDirs[$1]}" "${deployDir}/${1}"
-	touch "${deployDir}/${1}${deployExtension}"
+	touch "${deployDir}/${1}${deploySuffix}"
 	echo "Deployed application $1"
 }
 
 function deploy_routine {
-	mapfile -d '' applicationNameOrdered < <(printf "%s\\0" "${!applicationDirs[@]}" | sort -z)
+	mapfile -td '' applicationNamesOrd < <(printf "%s\\0" "${!applicationDirs[@]}" | sort -z)
 	if [[ "$#" = "0" ]]; then
 		echo "======================"
 		echo "=== Deploy routine ==="
 		echo "======================"
 		echo "This routine is for deploying applications in $deployDir"
 		echo "Select an application:"
-		for i in "${!applicationNameOrdered[@]}"; do
-			echo "$i - ${applicationNameOrdered[$i]}"
+		for i in "${!applicationNamesOrd[@]}"; do
+			echo "$i - ${applicationNamesOrd[$i]}"
 		done
 		echo -n "Your choice: "
 		read -r choice
-		if [[ $choice =~ ^[0-9]+$ && "$choice" -ge 0 && "$choice" -lt "${#applicationNameOrdered[@]}" ]]; then
-			deploy_application "${applicationNameOrdered[$choice]}"
+		if [[ $choice =~ ^[0-9]+$ && "$choice" -ge 0 && "$choice" -lt "${#applicationNamesOrd[@]}" ]]; then
+			deploy_application "${applicationNamesOrd[$choice]}"
 		fi
 	fi
 }
@@ -207,7 +207,7 @@ function deploy_routine {
 
 function check_range {
 	for index in "${indexArray[@]}"; do
-		if [[ "$index" -ge "${#commandNameOrdered[@]}" ]]; then
+		if [[ "$index" -ge "${#commandNamesOrd[@]}" ]]; then
 			echo "$index is out of range"
 			exit 1
 		fi
@@ -218,7 +218,7 @@ function execute_commands {
 	mapfile -td '-' indexArray < <(echo -n "$1")
 	check_range
 	for index in "${indexArray[@]}"; do
-		commandName=${commandNameOrdered[$index]}
+		commandName=${commandNamesOrd[$index]}
 		echo "==================== Execute $commandName ===================="		
 		if eval "${commands[$commandName]}"; then
 			echo "$commandName executed successfully"
@@ -230,15 +230,15 @@ function execute_commands {
 }
 
 function execute_routine {
-	mapfile -d '' commandNameOrdered < <(printf "%s\\0" "${!commands[@]}" | sort -z)
+	mapfile -td '' commandNamesOrd < <(printf "%s\\0" "${!commands[@]}" | sort -z)
 	if [[ "$#" = "0" ]]; then
-		echo "=====================#="
+		echo "======================="
 		echo "=== Execute routine ==="
 		echo "======================="
 		echo "This routine is for executing custom commands"
 		echo "Select a series of commands (use '-' as a separator):"
-		for i in "${!commandNameOrdered[@]}"; do
-			echo "$i - ${commandNameOrdered[$i]}"
+		for i in "${!commandNamesOrd[@]}"; do
+			echo "$i - ${commandNamesOrd[$i]}"
 		done
 		echo -n "Your choice: "
 		read -r choice
@@ -270,7 +270,7 @@ if [[ "$#" = "0" ]]; then
 	read -r -n1 choice
 	echo -e -n "\\n"
 	if [[ $choice = "0" ]]; then
-		toggle_routine
+		comment_routine
 	elif [[ $choice = "1" ]]; then
 		context_routine
 	elif [[ $choice = "2" ]]; then
@@ -280,8 +280,8 @@ if [[ "$#" = "0" ]]; then
 	elif [[ $choice = "4" ]]; then
 		version_routine
 	fi
-elif [[ $1 = "$toggleRoutineArgument" ]]; then
-	toggle_routine "$2"
+elif [[ $1 = "$commentRoutineArgument" ]]; then
+	comment_routine "$2"
 elif [[ $1 = "$contextRoutineArgument" ]]; then
 	context_routine
 elif [[ $1 = "$deployRoutineArgument" ]]; then

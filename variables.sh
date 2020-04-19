@@ -17,17 +17,17 @@
 #	You should have received a copy of the GNU General Public License
 #	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-### TOGGLE VARIABLES ###
+### COMMENT VARIABLES ###
 
-#toggleFile="PATH TO TOGGLE FILE"
+#commentFile="PATH TO COMMENT FILE"
 
 stringToSearch=liquibase
-commentCharacter=#
+commentChar=#
 
 ### CONTEXT VARIABLES ###
 
 #contextDir="PATH TO CONTEXT DIRECTORY"
-#currentContext="NAME OF CURRENT CONTEXT"
+#activeContext="NAME OF ACTIVE CONTEXT"
 
 archivedSuffix=.archived
 temporarySuffix=.temp
@@ -45,7 +45,7 @@ propertySeparator=:
 #applicationDirs["APPLICATION NAME 2"]="PATH TO APPLICATION DIRECTORY 2"
 #...
 
-deployExtension=.dodeploy
+deploySuffix=.dodeploy
 
 ### EXECUTE VARIABLES ###
 
@@ -56,7 +56,7 @@ deployExtension=.dodeploy
 
 ### SYSTEM VARIABLES ###
 
-toggleRoutineArgument=--toggle
+commentRoutineArgument=--comment
 contextRoutineArgument=--context
 deployRoutineArgument=--deploy
 executeRoutineArgument=--execute
@@ -83,5 +83,5 @@ function printErrors {
 	fi
 }
 
-collectErrors "toggleFile" "contextDir" "currentContext" "deployDir" "applicationDirs" "commands"
+collectErrors "commentFile" "contextDir" "activeContext" "deployDir" "applicationDirs" "commands"
 printErrors
